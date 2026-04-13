@@ -1,0 +1,1749 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GENESTOR — Solutions Ascenseurs & Accès Intelligent</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Raleway:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --navy: #0a1628;
+  --navy2: #0f2044;
+  --gold: #c9a84c;
+  --gold2: #e8c97a;
+  --white: #ffffff;
+  --light: #f4f6f9;
+  --gray: #6b7a8d;
+  --dark: #1a2332;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; scroll-behavior: smooth; }
+
+body {
+  font-family: 'Raleway', sans-serif;
+  background: var(--white);
+  color: var(--navy);
+  overflow-x: hidden;
+}
+
+/* ── NAVBAR ── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 1000;
+  background: rgba(10, 22, 40, 0.97);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.2);
+  padding: 0 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+  transition: all 0.3s;
+}
+
+.nav-logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--white);
+  letter-spacing: 3px;
+  text-decoration: none;
+}
+
+.nav-logo span { color: var(--gold); }
+
+.nav-logo-img {
+  height: 72px; /* Maintient l'image dans l'espace de la navbar */
+  width: auto;
+  object-fit: contain;
+  cursor: pointer;
+  /* On retire le shadow qui cause parfois la barre noire au-dessus, on pousse le contraste */
+  filter: invert(1) contrast(200%);
+  mix-blend-mode: screen;
+  /* Coupe radicale des bords invisibles pour supprimer toute ligne noire (en haut, droite, bas, gauche) */
+  clip-path: inset(35% 2% 35% 2%);
+  /* On zoome l'image rognée depuis son centre gauche de façon spectaculaire */
+  transform: scale(4);
+  transform-origin: left center;
+  transition: transform 0.3s;
+}
+.nav-logo-img:hover {
+  transform: scale(4.2);
+}
+
+.nav-links {
+  display: flex;
+  list-style: none;
+  gap: 36px;
+}
+
+.nav-links a {
+  color: rgba(255,255,255,0.8);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: color 0.3s;
+  cursor: pointer;
+}
+
+.nav-links a:hover { color: var(--gold); }
+
+/* ── SECTIONS ── */
+.section { display: none; }
+.section.active { display: block; }
+
+/* ── HERO ── */
+#hero {
+  min-height: 100vh;
+  background: var(--navy);
+  position: relative;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(135deg, rgba(10,22,40,0.95) 0%, rgba(15,32,68,0.85) 50%, rgba(10,22,40,0.95) 100%),
+    repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 40px,
+      rgba(201,168,76,0.03) 40px,
+      rgba(201,168,76,0.03) 41px
+    );
+}
+
+.hero-geo {
+  position: absolute;
+  right: -100px; top: 50%;
+  transform: translateY(-50%);
+  width: 600px; height: 600px;
+  border: 1px solid rgba(201,168,76,0.1);
+  border-radius: 50%;
+}
+
+.hero-geo::before {
+  content: '';
+  position: absolute;
+  inset: 40px;
+  border: 1px solid rgba(201,168,76,0.08);
+  border-radius: 50%;
+}
+
+.hero-geo::after {
+  content: '';
+  position: absolute;
+  inset: 80px;
+  border: 1px solid rgba(201,168,76,0.06);
+  border-radius: 50%;
+}
+
+.hero-line {
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 4px;
+  background: linear-gradient(to bottom, transparent, var(--gold), transparent);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 140px 80px 80px;
+  max-width: 700px;
+}
+
+.hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(201,168,76,0.1);
+  border: 1px solid rgba(201,168,76,0.3);
+  color: var(--gold);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  padding: 8px 16px;
+  border-radius: 2px;
+  margin-bottom: 28px;
+}
+
+.hero-tag::before {
+  content: '';
+  width: 6px; height: 6px;
+  background: var(--gold);
+  border-radius: 50%;
+}
+
+.hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(42px, 6vw, 72px);
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1.05;
+  margin-bottom: 8px;
+}
+
+.hero-title span { color: var(--gold); }
+
+.hero-subtitle {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(18px, 2.5vw, 26px);
+  font-weight: 400;
+  color: rgba(255,255,255,0.5);
+  font-style: italic;
+  margin-bottom: 28px;
+}
+
+.hero-desc {
+  font-size: 15px;
+  color: rgba(255,255,255,0.65);
+  line-height: 1.8;
+  max-width: 520px;
+  margin-bottom: 44px;
+}
+
+.hero-btns {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  color: var(--navy);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 16px 32px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 0 100%);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(201,168,76,0.35);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--white);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 15px 32px;
+  border: 1px solid rgba(255,255,255,0.3);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-outline:hover {
+  border-color: var(--gold);
+  color: var(--gold);
+}
+
+.hero-stats {
+  position: absolute;
+  bottom: 60px; right: 80px;
+  display: flex;
+  gap: 48px;
+  z-index: 2;
+}
+
+.stat {
+  text-align: center;
+}
+
+.stat-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 38px;
+  font-weight: 900;
+  color: var(--gold);
+  line-height: 1;
+}
+
+.stat-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  margin-top: 6px;
+}
+
+/* ── PAGE HERO ── */
+.page-hero {
+  background: var(--navy);
+  padding: 140px 80px 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.page-hero::before {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(to right, var(--gold), var(--gold2), transparent);
+}
+
+.page-hero-tag {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 16px;
+}
+
+.page-hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(32px, 5vw, 56px);
+  font-weight: 900;
+  color: var(--white);
+  line-height: 1.1;
+}
+
+.page-hero p {
+  font-size: 16px;
+  color: rgba(255,255,255,0.6);
+  margin-top: 16px;
+  max-width: 560px;
+  line-height: 1.7;
+}
+
+/* ── SECTION STYLES ── */
+.section-wrap {
+  padding: 90px 80px;
+}
+
+.section-wrap.alt { background: var(--light); }
+
+.sec-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sec-label::before {
+  content: '';
+  width: 30px; height: 2px;
+  background: var(--gold);
+}
+
+.sec-title {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(28px, 4vw, 44px);
+  font-weight: 900;
+  color: var(--navy);
+  line-height: 1.15;
+  margin-bottom: 16px;
+}
+
+.sec-title span { color: var(--gold); }
+
+.sec-desc {
+  font-size: 15px;
+  color: var(--gray);
+  line-height: 1.75;
+  max-width: 580px;
+  margin-bottom: 48px;
+}
+
+/* ── SERVICES GRID ── */
+.services-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+}
+
+.service-card {
+  background: var(--white);
+  border: 1px solid #e0e6f0;
+  padding: 36px 30px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s;
+}
+
+.service-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 0;
+  background: linear-gradient(to bottom, var(--gold), var(--gold2));
+  transition: height 0.4s;
+}
+
+.service-card:hover { transform: translateY(-4px); box-shadow: 0 20px 50px rgba(10,22,40,0.12); }
+.service-card:hover::before { height: 100%; }
+
+.service-icon {
+  font-size: 32px;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.service-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 12px;
+}
+
+.service-card p {
+  font-size: 14px;
+  color: var(--gray);
+  line-height: 1.7;
+}
+
+/* Smart system highlight card */
+.service-card.featured {
+  background: var(--navy);
+  border-color: rgba(201,168,76,0.3);
+}
+
+.service-card.featured h3 { color: var(--white); }
+.service-card.featured p { color: rgba(255,255,255,0.65); }
+.service-card.featured .service-icon { filter: none; }
+
+.smart-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(201,168,76,0.15);
+  border: 1px solid rgba(201,168,76,0.3);
+  color: var(--gold);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 5px 10px;
+  border-radius: 2px;
+  margin-top: 16px;
+}
+
+/* ── ABOUT ── */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.about-visual {
+  position: relative;
+}
+
+.about-box {
+  background: var(--navy);
+  padding: 50px 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.about-box::before {
+  content: '';
+  position: absolute;
+  top: -50px; right: -50px;
+  width: 160px; height: 160px;
+  border: 30px solid rgba(201,168,76,0.1);
+  border-radius: 50%;
+}
+
+.about-year {
+  font-family: 'Playfair Display', serif;
+  font-size: 80px;
+  font-weight: 900;
+  color: rgba(201,168,76,0.15);
+  line-height: 1;
+  margin-bottom: -20px;
+}
+
+.about-since {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 20px;
+}
+
+.about-quote {
+  font-family: 'Playfair Display', serif;
+  font-size: 18px;
+  font-style: italic;
+  color: var(--white);
+  line-height: 1.6;
+}
+
+.about-corner {
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 60px; height: 60px;
+  background: linear-gradient(135deg, transparent 50%, var(--gold) 50%);
+}
+
+.about-text p {
+  font-size: 15px;
+  color: var(--gray);
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+
+.about-list {
+  list-style: none;
+  margin-top: 32px;
+}
+
+.about-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 18px;
+  font-size: 14px;
+  color: var(--navy);
+  font-weight: 500;
+}
+
+.about-list li::before {
+  content: '◆';
+  color: var(--gold);
+  font-size: 8px;
+  margin-top: 5px;
+  flex-shrink: 0;
+}
+
+.cities-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 28px;
+}
+
+.city-tag {
+  background: var(--light);
+  border: 1px solid #d8e0ec;
+  color: var(--navy);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 14px;
+  letter-spacing: 0.05em;
+}
+
+/* ── ENGAGEMENTS ── */
+.eng-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  background: #d8e0ec;
+}
+
+.eng-item {
+  background: var(--white);
+  padding: 44px 36px;
+  position: relative;
+  transition: background 0.3s;
+}
+
+.eng-item:hover { background: var(--navy); }
+.eng-item:hover .eng-title { color: var(--white); }
+.eng-item:hover .eng-text { color: rgba(255,255,255,0.65); }
+
+.eng-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 52px;
+  font-weight: 900;
+  color: rgba(201,168,76,0.15);
+  line-height: 1;
+  margin-bottom: 16px;
+}
+
+.eng-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 14px;
+  transition: color 0.3s;
+}
+
+.eng-text {
+  font-size: 14px;
+  color: var(--gray);
+  line-height: 1.7;
+  transition: color 0.3s;
+}
+
+/* ── SMART SYSTEM SECTION ── */
+.smart-section {
+  background: var(--navy);
+  padding: 90px 80px;
+  position: relative;
+  overflow: hidden;
+}
+
+.smart-section::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(to right, var(--gold), var(--gold2), transparent);
+}
+
+.smart-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.smart-features {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 36px;
+}
+
+.smart-feat {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(201,168,76,0.15);
+  padding: 20px;
+  transition: all 0.3s;
+}
+
+.smart-feat:hover {
+  background: rgba(201,168,76,0.08);
+  border-color: rgba(201,168,76,0.3);
+}
+
+.smart-feat-icon { font-size: 22px; margin-bottom: 10px; }
+
+.smart-feat h4 {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 6px;
+}
+
+.smart-feat p {
+  font-size: 12px;
+  color: rgba(255,255,255,0.5);
+  line-height: 1.5;
+}
+
+.smart-visual {
+  position: relative;
+}
+
+.smart-card {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(201,168,76,0.2);
+  padding: 30px;
+  margin-bottom: 16px;
+}
+
+.smart-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.smart-card-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--white);
+  letter-spacing: 0.05em;
+}
+
+.status-dot {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #4ade80;
+}
+
+.status-dot::before {
+  content: '';
+  width: 7px; height: 7px;
+  background: #4ade80;
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.4; }
+}
+
+.smart-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  font-size: 12px;
+}
+
+.smart-row:last-child { border-bottom: none; }
+.smart-row-label { color: rgba(255,255,255,0.5); }
+.smart-row-val { color: var(--gold); font-weight: 600; }
+.smart-row-val.green { color: #4ade80; }
+
+/* ── REALISATIONS ── */
+.real-intro {
+  text-align: center;
+  margin-bottom: 56px;
+}
+
+.real-intro .sec-label { justify-content: center; }
+.real-intro .sec-title { margin: 0 auto; }
+
+.real-wrapper {
+  overflow: hidden;
+  width: 100%;
+  position: relative;
+  padding: 20px 0;
+}
+
+.real-grid {
+  display: flex !important;
+  gap: 30px;
+  width: max-content;
+  animation: scrollGallery 40s linear infinite;
+}
+
+.real-grid:hover {
+  animation-play-state: paused;
+}
+
+@keyframes scrollGallery {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(calc(-50% - 15px)); } /* Scrolls half the width to allow seamless loop */
+}
+
+.real-item {
+  width: 600px;
+  flex-shrink: 0;
+  aspect-ratio: 16/9;
+  background: var(--navy2);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  border-radius: 8px;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+}
+
+@media (max-width: 900px) {
+  .real-item {
+    width: 80vw;
+  }
+}
+
+.real-item-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--navy), var(--navy2));
+}
+
+.real-placeholder {
+  font-size: 48px;
+  margin-bottom: 12px;
+}
+
+.real-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(255,255,255,0.4);
+  letter-spacing: 0.1em;
+  text-align: center;
+  padding: 0 20px;
+}
+
+.real-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(10,22,40,0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s;
+  border: 2px solid var(--gold);
+}
+
+.real-item:hover .real-overlay { opacity: 1; }
+
+.real-overlay-text {
+  font-family: 'Playfair Display', serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--gold);
+  text-align: center;
+}
+
+.photo-note {
+  text-align: center;
+  margin-top: 28px;
+  font-size: 13px;
+  color: var(--gray);
+  font-style: italic;
+}
+
+/* ── CONTACT ── */
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 60px;
+  align-items: start;
+}
+
+.contact-info {
+  background: var(--navy);
+  padding: 48px 40px;
+  position: relative;
+  overflow: hidden;
+}
+
+.contact-info::after {
+  content: '';
+  position: absolute;
+  bottom: 0; right: 0;
+  width: 80px; height: 80px;
+  background: linear-gradient(135deg, transparent 50%, rgba(201,168,76,0.2) 50%);
+}
+
+.contact-info h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 32px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.contact-icon {
+  width: 42px; height: 42px;
+  background: rgba(201,168,76,0.1);
+  border: 1px solid rgba(201,168,76,0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.contact-item-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 4px;
+}
+
+.contact-item-val {
+  font-size: 14px;
+  color: rgba(255,255,255,0.8);
+  line-height: 1.5;
+}
+
+.contact-form h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--navy);
+  margin-bottom: 28px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--navy);
+  margin-bottom: 8px;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  background: var(--light);
+  border: 1px solid #d0d8e8;
+  padding: 12px 16px;
+  font-family: 'Raleway', sans-serif;
+  font-size: 14px;
+  color: var(--navy);
+  outline: none;
+  transition: border-color 0.3s;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: var(--gold);
+}
+
+.form-group textarea { resize: vertical; min-height: 120px; }
+
+/* ── FOOTER ── */
+footer {
+  background: #060e1a;
+  padding: 60px 80px 30px;
+  color: rgba(255,255,255,0.6);
+}
+
+.footer-top {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  gap: 48px;
+  padding-bottom: 48px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  margin-bottom: 30px;
+}
+
+.footer-brand {
+  font-family: 'Playfair Display', serif;
+  font-size: 24px;
+  font-weight: 900;
+  color: var(--white);
+  letter-spacing: 3px;
+  margin-bottom: 16px;
+}
+
+.footer-brand span { color: var(--gold); }
+
+.footer-brand-img {
+  height: 100px;
+  width: auto;
+  object-fit: contain;
+  margin-bottom: 20px;
+  display: block;
+  cursor: pointer;
+  filter: invert(1) contrast(200%);
+  mix-blend-mode: screen;
+  clip-path: inset(35% 2% 35% 2%);
+  transform: scale(3.5);
+  transform-origin: left center;
+}
+
+.footer-tagline {
+  font-size: 13px;
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.footer-col h4 {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-bottom: 20px;
+}
+
+.footer-col ul { list-style: none; }
+
+.footer-col ul li {
+  margin-bottom: 10px;
+}
+
+.footer-col ul li a {
+  color: rgba(255,255,255,0.55);
+  text-decoration: none;
+  font-size: 13px;
+  transition: color 0.3s;
+  cursor: pointer;
+}
+
+.footer-col ul li a:hover { color: var(--gold); }
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+}
+
+.footer-bottom-copy { color: rgba(255,255,255,0.35); }
+.footer-gold { color: var(--gold); font-weight: 600; }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-up { animation: fadeUp 0.7s ease forwards; }
+.fade-up-2 { animation: fadeUp 0.7s 0.15s ease forwards; opacity: 0; }
+.fade-up-3 { animation: fadeUp 0.7s 0.3s ease forwards; opacity: 0; }
+
+/* ── RESPONSIVE MOBILE ── */
+@media (max-width: 990px) {
+  .section-wrap {
+    padding: 60px 20px;
+  }
+
+  .about-grid, 
+  .smart-grid, 
+  .contact-grid {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+  
+  .eng-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+
+  #hero {
+    flex-direction: column;
+    align-items: center;
+    padding-top: 160px;
+    padding-bottom: 60px;
+    justify-content: center;
+  }
+  
+  .page-hero {
+    padding: 160px 30px 60px;
+  }
+  
+  .hero-content {
+    max-width: 100%;
+    padding: 20px 30px;
+    text-align: center;
+  }
+
+  .hero-desc {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-btns {
+    justify-content: center;
+  }
+
+  .hero-image {
+    position: relative !important;
+    right: 0 !important;
+    top: 0 !important;
+    width: 90% !important;
+    max-width: 400px !important;
+    margin: 20px auto 40px auto;
+    transform: none !important;
+  }
+
+  .hero-stats {
+    position: relative;
+    bottom: 0;
+    right: 0;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 30px;
+  }
+
+  .stat-num {
+    font-size: 28px;
+  }
+
+  nav {
+    padding: 10px 20px;
+    flex-wrap: wrap;
+    flex-direction: column;
+    align-items: center;
+    height: auto;
+    min-height: 72px;
+  }
+
+  .nav-logo-img {
+    height: 45px;
+    margin: 5px auto 15px auto;
+    transform-origin: center center;
+    transform: scale(3);
+  }
+
+  .nav-links {
+    width: 100%;
+    margin-bottom: 5px;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .nav-links a {
+    font-size: 11px;
+  }
+
+  .footer-top {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    text-align: center;
+  }
+
+  .footer-brand-img {
+    height: 60px;
+    margin: 0 auto 15px auto;
+    transform-origin: center center;
+    transform: scale(3);
+  }
+
+  .footer-col ul {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .contact-info {
+    padding: 30px 20px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .contact-form {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 20px;
+  }
+
+  .eng-item {
+    padding: 30px 20px;
+  }
+
+  .about-box {
+    padding: 30px 20px;
+  }
+
+  .footer-bottom {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav>
+  <img src="finallogo.png" alt="Genestor Logo" class="nav-logo-img" onclick="showPage('home')" title="Accueil">
+  <ul class="nav-links">
+    <li><a onclick="showPage('home')">Accueil</a></li>
+    <li><a onclick="showPage('services')">Nos Services</a></li>
+    <li><a onclick="showPage('smart')">Système Intelligent</a></li>
+    <li><a onclick="showPage('about')">À Propos</a></li>
+    <li><a onclick="showPage('engagements')">Nos Engagements</a></li>
+    <li><a onclick="showPage('realisations')">Réalisations</a></li>
+    <li><a onclick="showPage('contact')">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- ══════════════════ HOME ══════════════════ -->
+<div id="page-home" class="section active">
+
+  <div id="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-geo"></div>
+    <div class="hero-line"></div>
+
+    <div class="hero-content">
+      <div class="hero-tag fade-up">Solutions Verticales Premium</div>
+      <h1 class="hero-title fade-up-2">L'Élévation<br><span>Réinventée</span></h1>
+      <p class="hero-subtitle fade-up-2">Depuis 1996 — Partout au Maroc</p>
+      <p class="hero-desc fade-up-3">
+        GENESTOR conçoit, installe et maintient des ascenseurs et monte-charges de haute performance. 
+        Pionniers du système d'accès intelligent pour ascenseurs au Maroc, nous unissons expertise 
+        traditionnelle et innovation technologique.
+      </p>
+      
+      <div class="hero-btns fade-up-3">
+        <button class="btn-primary" onclick="showPage('contact')">Demander un Devis</button>
+        <button class="btn-outline" onclick="showPage('services')">Nos Services</button>
+      </div>
+    </div>
+
+    <div class="hero-image fade-up" style="position: absolute; right: 8%; top: 120px; width: 32%; max-width: 400px; z-index: 2;">
+      <div style="border-radius: 12px; overflow: hidden; border: 2px solid rgba(201,168,76,0.3); box-shadow: 0 15px 30px rgba(10,22,40,0.8); margin-bottom: 15px;">
+        <img src="hassan2.jpg" alt="Mosquée Hassan II" style="width: 100%; height: auto; display: block; filter: brightness(0.9);">
+      </div>
+      <p style="text-align: center; font-size: 14px; color: rgba(255,255,255,0.9); padding-top: 10px; border-top: 1px solid rgba(201,168,76,0.2);">
+        <strong style="color: var(--gold); display: block; margin-bottom: 5px;">Fiers d'avoir réalisé notre plus grand projet :</strong>
+        l'ascenseur de la Mosquée Hassan II.
+      </p>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">28+</div>
+        <div class="stat-label">Années d'expérience</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">Maroc</div>
+        <div class="stat-label">Intervention nationale</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">100%</div>
+        <div class="stat-label">Satisfaction client</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Services aperçu -->
+  <div class="section-wrap">
+    <div class="sec-label">Ce que nous faisons</div>
+    <h2 class="sec-title">Expertise Complète en<br><span>Mobilité Verticale</span></h2>
+    <p class="sec-desc">De l'installation à la maintenance, en passant par nos solutions intelligentes connectées, GENESTOR vous accompagne à chaque étape.</p>
+
+    <div class="services-grid">
+      <div class="service-card">
+        <span class="service-icon">🏗️</span>
+        <h3>Installation d'Ascenseurs</h3>
+        <p>Conception et installation sur mesure adaptées aux spécifications de chaque bâtiment résidentiel ou commercial.</p>
+      </div>
+      <div class="service-card">
+        <span class="service-icon">🔧</span>
+        <h3>Maintenance & Réparation</h3>
+        <p>Suivi régulier et interventions rapides pour garantir la sécurité et la longévité de votre installation.</p>
+      </div>
+      <div class="service-card">
+        <span class="service-icon">⚡</span>
+        <h3>Modernisation</h3>
+        <p>Mise à niveau de vos équipements existants avec les dernières technologies pour plus de sécurité et d'efficacité.</p>
+      </div>
+      <div class="service-card">
+        <span class="service-icon">📦</span>
+        <h3>Monte-Charges</h3>
+        <p>Solutions de transport de charge pour entrepôts, commerces et bâtiments industriels, robustes et fiables.</p>
+      </div>
+      <div class="service-card featured">
+        <span class="service-icon">📱</span>
+        <h3>Système d'Accès Intelligent</h3>
+        <p>Contrôle d'accès connecté via application mobile, surveillance en temps réel et gestion des permissions à distance.</p>
+        <div class="smart-badge">✨ Innovation GENESTOR</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════ SERVICES ══════════════════ -->
+<div id="page-services" class="section">
+  <div class="page-hero">
+    <div class="page-hero-tag">Nos Services</div>
+    <h1>Solutions Complètes<br>pour Votre Mobilité Verticale</h1>
+    <p>GENESTOR vous propose une gamme complète de services pensés pour répondre à tous les besoins en matière d'ascenseurs et de monte-charges.</p>
+  </div>
+
+  <div class="section-wrap">
+    <div class="services-grid">
+      <div class="service-card">
+        <span class="service-icon">🏗️</span>
+        <h3>Installation d'Ascenseurs</h3>
+        <p>De la conception à la mise en œuvre, nous créons des ascenseurs sur mesure adaptés aux spécifications de chaque bâtiment pour une intégration harmonieuse et esthétique.</p>
+      </div>
+      <div class="service-card">
+        <span class="service-icon">🔧</span>
+        <h3>Maintenance Préventive</h3>
+        <p>Notre équipe de maintenance dédiée assure un fonctionnement optimal de votre ascenseur, minimisant les temps d'arrêt et prolongeant sa durée de vie grâce à des visites régulières.</p>
+      </div>
+      <div class="service-card">
+        <span class="service-icon">🛠️</span>
+        <h3>Réparation & Dépannage</h3>
+        <p>Interventions rapides 24/7 pour tout type de panne. Notre équipe technique intervient dans les meilleurs délais pour remettre votre installation en service.</p>
+      </div>
+      <div class="service-card">
+        <span class="service-icon">⚡</span>
+        <h3>Modernisation</h3>
+        <p>Donnez une nouvelle vie à votre ascenseur en le modernisant avec les dernières technologies pour améliorer la sécurité, l'efficacité énergétique et le confort des usagers.</p>
+      </div>
+      <div class="service-card">
+        <span class="service-icon">📦</span>
+        <h3>Monte-Charges</h3>
+        <p>Installation et maintenance de monte-charges pour usage commercial et industriel. Solutions robustes adaptées aux charges lourdes et à un usage intensif.</p>
+      </div>
+      <div class="service-card featured">
+        <span class="service-icon">📱</span>
+        <h3>Accès Intelligent IoT</h3>
+        <p>Notre solution IoT propriétaire permet la gestion d'accès via smartphone, la surveillance en temps réel des 16 points de sécurité et le contrôle à distance.</p>
+        <div class="smart-badge">✨ Exclusivité GENESTOR</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ SMART SYSTEM ══════════════════ -->
+<div id="page-smart" class="section">
+  <div class="page-hero">
+    <div class="page-hero-tag">Innovation Technologique</div>
+    <h1>Système d'Accès<br>Intelligent pour Ascenseurs</h1>
+    <p>La première solution IoT marocaine dédiée au contrôle d'accès intelligent des ascenseurs. Conçue et développée par GENESTOR.</p>
+  </div>
+
+  <div class="smart-section">
+    <div class="smart-grid">
+      <div>
+        <div class="sec-label" style="color:var(--gold)">Technologie Propriétaire</div>
+        <h2 class="sec-title" style="color:var(--white)">Votre Ascenseur,<br><span>Connecté & Sécurisé</span></h2>
+        <p style="color:rgba(255,255,255,0.6);font-size:15px;line-height:1.8;margin-bottom:8px">
+          Notre système IoT transforme votre ascenseur en infrastructure intelligente. 
+          Le syndic gère les accès depuis son smartphone. L'administrateur surveille tout en temps réel.
+          L'ESP32 installé en salle des machines garantit la continuité même sans internet.
+        </p>
+
+        <div class="smart-features">
+          <div class="smart-feat">
+            <div class="smart-feat-icon">📱</div>
+            <h4>App Syndic</h4>
+            <p>Gestion des cartes d'accès et demandes depuis mobile</p>
+          </div>
+          <div class="smart-feat">
+            <div class="smart-feat-icon">🛡️</div>
+            <h4>Admin Dashboard</h4>
+            <p>Suivi GPS des techniciens et contrôle global</p>
+          </div>
+          <div class="smart-feat">
+            <div class="smart-feat-icon">📡</div>
+            <h4>MQTT Temps Réel</h4>
+            <p>Commandes instantanées vers le matériel</p>
+          </div>
+          <div class="smart-feat">
+            <div class="smart-feat-icon">💾</div>
+            <h4>Mode Hors-ligne</h4>
+            <p>Accès garanti même sans connexion Wi-Fi</p>
+          </div>
+          <div class="smart-feat">
+            <div class="smart-feat-icon">📊</div>
+            <h4>16 Points Sécurité</h4>
+            <p>Surveillance complète de l'état de l'ascenseur</p>
+          </div>
+          <div class="smart-feat">
+            <div class="smart-feat-icon">🔑</div>
+            <h4>Accès par Carte</h4>
+            <p>Lecteurs Wiegand multi-niveaux (hall, parking, étages)</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="smart-visual">
+        <div class="smart-card">
+          <div class="smart-card-header">
+            <div class="smart-card-title">Tableau de Bord — Ascenseur A</div>
+            <div class="status-dot">En ligne</div>
+          </div>
+          <div class="smart-row">
+            <span class="smart-row-label">État de la porte</span>
+            <span class="smart-row-val green">Fermée ✓</span>
+          </div>
+          <div class="smart-row">
+            <span class="smart-row-label">Mode inspection</span>
+            <span class="smart-row-val green">Désactivé</span>
+          </div>
+          <div class="smart-row">
+            <span class="smart-row-label">Dernier accès</span>
+            <span class="smart-row-val">Carte #0042 — 14:32</span>
+          </div>
+          <div class="smart-row">
+            <span class="smart-row-label">Niveau actuel</span>
+            <span class="smart-row-val">Étage 3</span>
+          </div>
+          <div class="smart-row">
+            <span class="smart-row-label">Signaux de limite</span>
+            <span class="smart-row-val green">Normal</span>
+          </div>
+        </div>
+
+        <div class="smart-card">
+          <div class="smart-card-header">
+            <div class="smart-card-title">Accès récents</div>
+          </div>
+          <div class="smart-row">
+            <span class="smart-row-label">Carte #0042</span>
+            <span class="smart-row-val green">ACCORDÉ</span>
+          </div>
+          <div class="smart-row">
+            <span class="smart-row-label">Carte #0099</span>
+            <span class="smart-row-val" style="color:#f87171">REFUSÉ</span>
+          </div>
+          <div class="smart-row">
+            <span class="smart-row-label">Carte #0017</span>
+            <span class="smart-row-val green">ACCORDÉ</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-wrap alt">
+    <div class="sec-label">Flux de travail</div>
+    <h2 class="sec-title">Comment ça <span>fonctionne</span> ?</h2>
+    <div class="services-grid" style="margin-top:0">
+      <div class="service-card"><span class="service-icon">1️⃣</span><h3>Demande de carte</h3><p>Le syndic soumet une demande de nouvelle carte d'accès via l'application mobile.</p></div>
+      <div class="service-card"><span class="service-icon">2️⃣</span><h3>Validation admin</h3><p>L'administrateur approuve la demande depuis son tableau de bord.</p></div>
+      <div class="service-card"><span class="service-icon">3️⃣</span><h3>Mise à jour matériel</h3><p>Le backend envoie une commande MQTT à l'ESP32 qui télécharge la liste blanche.</p></div>
+      <div class="service-card"><span class="service-icon">4️⃣</span><h3>Accès accordé</h3><p>Le résident passe sa carte — accès accordé. Même hors ligne grâce au cache local.</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ À PROPOS ══════════════════ -->
+<div id="page-about" class="section">
+  <div class="page-hero">
+    <div class="page-hero-tag">À Propos de Nous</div>
+    <h1>28 Ans d'Excellence<br>au Service de la Hauteur</h1>
+    <p>Fondée en 1996, GENESTOR est une entreprise marocaine spécialisée dans les solutions de mobilité verticale.</p>
+  </div>
+
+  <div class="section-wrap">
+    <div class="about-grid">
+      <div class="about-visual">
+        <div class="about-box">
+          <div class="about-year">1996</div>
+          <div class="about-since">Fondée depuis</div>
+          <div class="about-quote">"Notre passion : concevoir des ascenseurs qui unissent les personnes et les espaces en toute sécurité, avec efficacité et élégance."</div>
+          <div class="about-corner"></div>
+        </div>
+      </div>
+
+      <div class="about-text">
+        <div class="sec-label">Notre histoire</div>
+        <h2 class="sec-title">Experts de confiance<br><span>depuis 28 ans</span></h2>
+        <p>Chez GENESTOR, nous sommes motivés par la passion de concevoir des ascenseurs qui unissent les personnes et les espaces en toute sécurité. Forts de 28 ans d'expérience, nous avons forgé une réputation solide grâce à notre maîtrise technique, notre fiabilité et notre attention rigoureuse aux détails.</p>
+        <p>Notre engagement envers l'excellence et notre détermination à dépasser les attentes de nos clients font de nous le partenaire idéal pour toutes vos solutions de mobilité verticale.</p>
+
+        <ul class="about-list">
+          <li>Installation d'ascenseurs résidentiels et commerciaux</li>
+          <li>Maintenance préventive et corrective certifiée</li>
+          <li>Modernisation d'installations existantes</li>
+          <li>Solution d'accès intelligent IoT — innovation marocaine</li>
+        </ul>
+
+        <div class="cities-row">
+          <span class="city-tag">📍 Partout au Maroc</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ ENGAGEMENTS ══════════════════ -->
+<div id="page-engagements" class="section">
+  <div class="page-hero">
+    <div class="page-hero-tag">Nos Engagements</div>
+    <h1>Les Valeurs qui Guident<br>Chacune de nos Actions</h1>
+  </div>
+
+  <div class="section-wrap">
+    <div class="eng-grid">
+      <div class="eng-item">
+        <div class="eng-num">01</div>
+        <div class="eng-title">Qualité Supérieure</div>
+        <div class="eng-text">Nous nous engageons à fournir des ascenseurs de qualité supérieure, fabriqués avec des matériaux durables et conformes aux normes les plus strictes de l'industrie. Chaque installation est un témoignage de notre excellence.</div>
+      </div>
+      <div class="eng-item">
+        <div class="eng-num">02</div>
+        <div class="eng-title">Solutions Personnalisées</div>
+        <div class="eng-text">Chaque projet est unique. Nous travaillons étroitement avec nos clients pour concevoir des ascenseurs personnalisés répondant parfaitement à leurs besoins spécifiques, qu'il s'agisse d'un immeuble résidentiel ou d'un bâtiment commercial.</div>
+      </div>
+      <div class="eng-item">
+        <div class="eng-num">03</div>
+        <div class="eng-title">Service Client Exceptionnel</div>
+        <div class="eng-text">Notre équipe dévouée est toujours prête à offrir un service client exceptionnel, en fournissant des réponses rapides et en veillant à la satisfaction de nos clients à chaque étape du processus.</div>
+      </div>
+      <div class="eng-item">
+        <div class="eng-num">04</div>
+        <div class="eng-title">Sécurité Avant Tout</div>
+        <div class="eng-text">Votre sécurité est notre priorité absolue. Nos ascenseurs sont équipés des systèmes de sécurité les plus avancés. Avec GENESTOR, montez en toute confiance, à chaque étage.</div>
+      </div>
+      <div class="eng-item">
+        <div class="eng-num">05</div>
+        <div class="eng-title">Durabilité & Fiabilité</div>
+        <div class="eng-text">Nos ascenseurs sont conçus pour offrir une solution de mobilité fiable et durable. Avec des matériaux de haute qualité et une maintenance régulière, ils sont prêts à vous servir pendant de nombreuses années.</div>
+      </div>
+      <div class="eng-item">
+        <div class="eng-num">06</div>
+        <div class="eng-title">Innovation Continue</div>
+        <div class="eng-text">Nous investissons continuellement dans la recherche et l'innovation. Notre système d'accès intelligent IoT en est la preuve : une solution 100% marocaine qui redéfinit le secteur.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ RÉALISATIONS ══════════════════ -->
+<div id="page-realisations" class="section">
+  <div class="page-hero">
+    <div class="page-hero-tag">Nos Réalisations</div>
+    <h1>Des Projets qui Parlent<br>d'Eux-Mêmes</h1>
+    <p>Une sélection de nos installations partout au Maroc.</p>
+  </div>
+
+  <div class="section-wrap">
+    <div class="real-intro">
+      <div class="sec-label">Portfolio</div>
+      <h2 class="sec-title">Nos <span>Installations</span></h2>
+      <p style="margin-top: 15px; font-size: 16px; color: var(--navy); font-weight: 600;">
+        Fiers d'avoir réalisé notre plus grand projet : l'ascenseur de la <span style="color: var(--gold);">Mosquée Hassan II</span>.
+      </p>
+    </div>
+
+    <div class="real-wrapper">
+      <div class="real-grid" id="real-carousel">
+        <!-- FIRST SET OF ITEMS -->
+        <div class="real-item">
+          <div class="real-item-inner" style="background: url('A2.jpeg') center/cover;"></div>
+        </div>
+        <div class="real-item">
+          <div class="real-item-inner" style="background: url('AS1.jpg') center/cover;"></div>
+        </div>
+        <div class="real-item">
+          <div class="real-item-inner" style="background: url('AS3.jpg') center/cover;"></div>
+        </div>
+        <div class="real-item">
+          <div class="real-item-inner" style="background: url('elevator4.jpg') center/cover;"></div>
+        </div>
+        <div class="real-item">
+          <div class="real-item-inner" style="background: url('elevator5.jpg') center/cover;"></div>
+        </div>
+        <div class="real-item">
+          <div class="real-item-inner" style="background: url('elevator6.jpg') center/cover;"></div>
+        </div>
+        <div class="real-item">
+          <div class="real-item-inner" style="background: url('elevator7.jpg') center/cover;"></div>
+        </div>
+        <div class="real-item">
+          <div class="real-item-inner" style="background: url('LIFT9.jpg') center/cover;"></div>
+        </div>
+        <div class="real-item">
+          <div class="real-item-inner" style="background: url('S3.jpeg') center/cover;"></div>
+        </div>
+        <div class="real-item">
+          <div class="real-item-inner" style="background: url('S4.jpeg') center/cover;"></div>
+        </div>
+        <div class="real-item">
+          <div class="real-item-inner" style="background: url('S5.jpeg') center/cover;"></div>
+        </div>
+        
+        <!-- DUPLICATED SET FOR INFINITE SCROLL -->
+        <div class="real-item">
+          <div class="real-item-inner" style="background: url('A2.jpeg') center/cover;"></div>
+        </div>
+        <div class="real-item">
+          <div class="real-item-inner" style="background: url('AS1.jpg') center/cover;"></div>
+        </div>
+        <div class="real-item">
+          <div class="real-item-inner" style="background: url('AS3.jpg') center/cover;"></div>
+        </div>
+        <div class="real-item">
+          <div class="real-item-inner" style="background: url('elevator4.jpg') center/cover;"></div>
+        </div>
+        <div class="real-item">
+          <div class="real-item-inner" style="background: url('elevator5.jpg') center/cover;"></div>
+        </div>
+        <div class="real-item">
+          <div class="real-item-inner" style="background: url('elevator6.jpg') center/cover;"></div>
+        </div>
+        <div class="real-item">
+          <div class="real-item-inner" style="background: url('elevator7.jpg') center/cover;"></div>
+        </div>
+        <div class="real-item">
+          <div class="real-item-inner" style="background: url('LIFT9.jpg') center/cover;"></div>
+        </div>
+        <div class="real-item">
+          <div class="real-item-inner" style="background: url('S3.jpeg') center/cover;"></div>
+        </div>
+        <div class="real-item">
+          <div class="real-item-inner" style="background: url('S4.jpeg') center/cover;"></div>
+        </div>
+        <div class="real-item">
+          <div class="real-item-inner" style="background: url('S5.jpeg') center/cover;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ CONTACT ══════════════════ -->
+<div id="page-contact" class="section">
+  <div class="page-hero">
+    <div class="page-hero-tag">Contactez-Nous</div>
+    <h1>Parlons de Votre<br>Prochain Projet</h1>
+    <p>Nous sommes impatients de collaborer avec vous. Contactez-nous pour un devis personnalisé gratuit.</p>
+  </div>
+
+  <div class="section-wrap">
+    <div class="contact-grid">
+      <div class="contact-info">
+        <h3>Nos Coordonnées</h3>
+
+        <div class="contact-item">
+          <div class="contact-icon">📞</div>
+          <div>
+            <div class="contact-item-label">Téléphone</div>
+            <div class="contact-item-val">05 22 60 86 44</div>
+          </div>
+        </div>
+
+        <div class="contact-item">
+          <div class="contact-icon">✉️</div>
+          <div>
+            <div class="contact-item-label">Email</div>
+            <div class="contact-item-val">genestor.gd@gmail.com</div>
+          </div>
+        </div>
+
+        <div class="contact-item">
+          <div class="contact-icon">📍</div>
+          <div>
+            <div class="contact-item-label">Adresse</div>
+            <div class="contact-item-val">Rue Cosmos, La Villette<br>Casablanca, Maroc</div>
+          </div>
+        </div>
+
+        <div class="contact-item">
+          <div class="contact-icon">🗺️</div>
+          <div>
+            <div class="contact-item-label">Zones d'intervention</div>
+            <div class="contact-item-val">Intervention<br>Partout au Maroc</div>
+          </div>
+        </div>
+      </div>
+
+      <form class="contact-form" action="mailto:genestor.gd@gmail.com" method="POST" enctype="text/plain">
+        <h3>Demander un Devis Gratuit</h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Prénom</label>
+            <input type="text" name="Prenom" placeholder="Votre prénom" required>
+          </div>
+          <div class="form-group">
+            <label>Nom</label>
+            <input type="text" name="Nom" placeholder="Votre nom" required>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Téléphone</label>
+            <input type="tel" name="Telephone" placeholder="06 XX XX XX XX" required>
+          </div>
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="Email" placeholder="votre@email.com" required>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Type de service</label>
+          <select name="Service">
+            <option>Installation d'ascenseur</option>
+            <option>Maintenance & Réparation</option>
+            <option>Modernisation</option>
+            <option>Monte-charge</option>
+            <option>Système d'accès intelligent</option>
+            <option>Autre</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Message</label>
+          <textarea name="Message" placeholder="Décrivez votre projet..." required></textarea>
+        </div>
+        <button type="submit" class="btn-primary" style="width:100%;justify-content:center">Envoyer la Demande →</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <img src="finallogo.png" alt="Genestor Logo" class="footer-brand-img" onclick="showPage('home')" title="Accueil">
+      <p class="footer-tagline">Votre partenaire de confiance pour des solutions d'ascenseurs de qualité supérieure depuis 1996.</p>
+      <p style="font-size:12px;color:rgba(255,255,255,0.3)">Intervention Partout au Maroc</p>
+    </div>
+    <div class="footer-col">
+      <h4>Navigation</h4>
+      <ul>
+        <li><a onclick="showPage('home')">Accueil</a></li>
+        <li><a onclick="showPage('services')">Nos Services</a></li>
+        <li><a onclick="showPage('smart')">Système Intelligent</a></li>
+        <li><a onclick="showPage('about')">À Propos</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Services</h4>
+      <ul>
+        <li><a onclick="showPage('services')">Installation</a></li>
+        <li><a onclick="showPage('services')">Maintenance</a></li>
+        <li><a onclick="showPage('services')">Modernisation</a></li>
+        <li><a onclick="showPage('services')">Monte-Charges</a></li>
+      </ul>
+    </div>
+    <div class="footer-col">
+      <h4>Contact</h4>
+      <ul>
+        <li><a>05 22 60 86 44</a></li>
+        <li><a>genestor.gd@gmail.com</a></li>
+        <li><a>Rue Cosmos, La Villette</a></li>
+        <li><a>Casablanca, Maroc</a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-bottom-copy">&copy; 2025 <span class="footer-gold">GENESTOR</span>. Tous droits réservés.</div>
+    <div style="font-size:11px;color:rgba(255,255,255,0.25)">Solutions Verticales Premium depuis 1996</div>
+  </div>
+</footer>
+
+<script>
+function showPage(page) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
